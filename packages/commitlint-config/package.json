@@ -1,0 +1,15 @@
+{
+  "name": "@repo/commitlint-config",
+  "version": "0.0.0",
+  "private": true,
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "exports": {
+    "./commitlint.config": "./commitlint.config.js"
+  },
+  "devDependencies": {
+    "@commitlint/config-conventional": "^19.7.1"
+  }
+}

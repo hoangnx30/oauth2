@@ -1,0 +1,14 @@
+{
+  "name": "@repo/prettier-config",
+  "version": "0.0.0",
+  "private": true,
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "@trivago/prettier-plugin-sort-imports": "5.2.2",
+    "prettier": "3.5.1",
+    "prettier-plugin-packagejson": "2.5.8"
+  }
+}

@@ -1,0 +1,16 @@
+services:
+  postgres:
+    container_name: postgres
+    image: postgres:17.3
+    environment:
+      POSTGRES_USER: hoangnx30
+      POSTGRES_PASSWORD: Matkhaulan#1
+      PGDATA: /data/postgres
+    volumes:
+      - postgres:/data/postgres
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+
+volumes:
+  postgres:
