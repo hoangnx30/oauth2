@@ -2,7 +2,6 @@ import {defineConfig} from 'drizzle-kit'
 import {readFileSync} from 'fs'
 import YAML from 'js-yaml'
 import {join} from 'path'
-import {DB_SCHEMA} from 'src/common/entities/base.entity'
 import {Env} from 'src/common/env'
 
 const loadEnv = () => {
@@ -33,7 +32,7 @@ export default defineConfig({
     prefix: 'timestamp'
   },
 
-  breakpoints: true,
   strict: true,
-  verbose: true
+  verbose: true,
+  breakpoints: true
 })

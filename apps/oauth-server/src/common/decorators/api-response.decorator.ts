@@ -2,15 +2,15 @@ import {HttpStatus, Type, applyDecorators} from '@nestjs/common'
 import {ApiExtraModels, ApiOkResponse, ApiResponse, getSchemaPath} from '@nestjs/swagger'
 import {ReferenceObject, SchemaObject} from '@nestjs/swagger/dist/interfaces/open-api-spec.interface'
 
-import {PaginatedResponseDto, ResponseDto} from '../dtos/response.dto'
+import {BaseApiResponse, PaginatedApiResponseDto} from '../dtos/response.dto'
 
 export const ApiPaginatedResponse = <TModel extends Type<unknown>>(model: TModel) => {
   return applyDecorators(
-    ApiExtraModels(PaginatedResponseDto, model),
+    ApiExtraModels(PaginatedApiResponseDto, model),
     ApiOkResponse({
       schema: {
         allOf: [
-          {$ref: getSchemaPath(PaginatedResponseDto)},
+          {$ref: getSchemaPath(PaginatedApiResponseDto)},
           {
             properties: {
               data: {
@@ -52,13 +52,13 @@ export const ApiOkeResponse = <TModel extends Type<unknown>>({
     }
 
     return applyDecorators(
-      ApiExtraModels(ResponseDto, model),
+      ApiExtraModels(BaseApiResponse, model),
       ApiResponse({
         description: description ?? 'Success',
         status: status,
         schema: {
           allOf: [
-            {$ref: getSchemaPath(ResponseDto)},
+            {$ref: getSchemaPath(BaseApiResponse)},
             {
               properties
             }
@@ -68,5 +68,5 @@ export const ApiOkeResponse = <TModel extends Type<unknown>>({
     )
   }
 
-  return applyDecorators(ApiExtraModels(ResponseDto), ApiResponse({type: ResponseDto, status}))
+  return applyDecorators(ApiExtraModels(BaseApiResponse), ApiResponse({type: BaseApiResponse, status}))
 }

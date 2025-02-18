@@ -1,5 +1,6 @@
 import {HttpStatus} from '@nestjs/common'
 import {ApiProperty} from '@nestjs/swagger'
+import {Exclude, Expose} from 'class-transformer'
 import {IsEmail, IsString, Matches, MinLength} from 'class-validator'
 
 import {ErrorMessage} from '@/common/constants/message.constants'
@@ -25,22 +26,50 @@ export class RegisterDtoReqBody {
   password: string
 }
 
+@Exclude()
 class User {
-  @ApiProperty() id: string
-  @ApiProperty() isActive: boolean
-  @ApiProperty() updateAt: Date | null
-  @ApiProperty() createdAt: Date
-  @ApiProperty() deletedAt: Date | null
-  @ApiProperty() username: string
-  @ApiProperty() email: string
+  @ApiProperty()
+  @Expose()
+  id: string
+
+  @ApiProperty()
+  @Expose()
+  isActive: boolean
+
+  @ApiProperty({type: String, example: new Date().toISOString()})
+  @Expose()
+  updateAt: Date | null
+
+  @ApiProperty({type: String, example: new Date().toISOString()})
+  @Expose()
+  createdAt: Date
+
+  @ApiProperty({type: String, example: new Date().toISOString()})
+  @Expose()
+  deletedAt: Date | null
+
+  @ApiProperty()
+  @Expose()
+  username: string
+
+  @ApiProperty()
+  @Expose()
+  email: string
 }
 
+@Exclude()
 export class RegisterResDto {
   @ApiProperty({type: User})
+  @Expose()
   user: User
 
   @ApiProperty()
+  @Expose()
   accessToken: string
+
+  constructor(properties: any) {
+    Object.assign(this, properties)
+  }
 }
 
 export const RegisterDocs = () => {

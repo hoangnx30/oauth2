@@ -1,4 +1,5 @@
 import {ApiProperty} from '@nestjs/swagger'
+import {Exclude, Expose} from 'class-transformer'
 import {ArrayMinSize, IsArray, IsBoolean, IsOptional, IsString, IsUrl, Matches} from 'class-validator'
 
 export class CreateOAuthClientDto {
@@ -31,4 +32,46 @@ export class CreateOAuthClientDto {
   @ApiProperty({description: 'Whether this is a confidential client'})
   @IsBoolean()
   isConfidential: boolean
+}
+
+@Exclude()
+class Client {
+  @ApiProperty()
+  @Expose()
+  clientId: string
+
+  @ApiProperty()
+  @Expose()
+  clientName: string
+
+  @ApiProperty()
+  @Expose()
+  clientUri: string
+
+  @ApiProperty()
+  @Expose()
+  redirectUris: string[]
+
+  @ApiProperty()
+  @Expose()
+  scope: string
+
+  @ApiProperty()
+  @Expose()
+  isConfidential: boolean
+
+  @ApiProperty()
+  @Expose()
+  clientSecret: string
+}
+
+@Exclude()
+export class CreateOAuthClientResDto {
+  @ApiProperty({type: Client})
+  @Expose()
+  client: Client
+
+  constructor(properties: any) {
+    Object.assign(this, properties)
+  }
 }

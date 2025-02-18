@@ -4,10 +4,11 @@ export type CreateOAuthClientCommandResult = {
   id: string
   clientId: string
   clientName: string
-  clientUri: string
-  redirectUris: string[]
-  scope?: string
+  clientUri: string | null
+  redirectUri: string
+  scope: string | null
   isConfidential: boolean
+  clientSecret: string | null
 }
 
 export class CreateOAuthClientCommand extends Command<CreateOAuthClientCommandResult> {
@@ -15,8 +16,9 @@ export class CreateOAuthClientCommand extends Command<CreateOAuthClientCommandRe
     public readonly clientName: string,
     public readonly clientUri: string,
     public readonly redirectUris: string[],
+    public readonly userId: string,
     public readonly scope?: string,
-    public readonly isConfidential?: string
+    public readonly isConfidential?: boolean
   ) {
     super()
   }

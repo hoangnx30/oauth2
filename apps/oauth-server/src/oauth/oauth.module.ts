@@ -5,13 +5,13 @@ import {JwtModule} from '@nestjs/jwt'
 import {CustomConfigModule} from '@/common/config'
 
 import {AuthorizeCommandHandler, LoginCommandHandler} from './application/handler'
+import {CreateOAuthClientHandler} from './application/handler/create-oauth-client.handler'
 import {RegisterCommandHandler} from './application/handler/register.handler'
 import {JwtStrategy} from './application/jwt.strategy'
 import {AuthService} from './application/services'
-import {AuthController, OAuthController} from './infrastructure/controllers'
-import {OAuthClientRepository} from './infrastructure/repositories'
-import {UserRepository} from './infrastructure/repositories/user.repository'
-import {OAUTH_CLIENT_REPOSITORY_TOKEN, USER_REPOSITORY_TOKEN} from './inject-token'
+import {AuthController, OAuthClientController, OAuthController} from './infrastructure/controllers'
+import {JwtTokenRepository, OAuthClientRepository, UserRepository} from './infrastructure/repositories'
+import {JWT_TOKEN_REPOSITORY_TOKEN, OAUTH_CLIENT_REPOSITORY_TOKEN, USER_REPOSITORY_TOKEN} from './inject-token'
 
 const providers: Provider[] = [
   {
@@ -22,9 +22,14 @@ const providers: Provider[] = [
     provide: USER_REPOSITORY_TOKEN,
     useClass: UserRepository
   },
+  {
+    provide: JWT_TOKEN_REPOSITORY_TOKEN,
+    useClass: JwtTokenRepository
+  },
   AuthorizeCommandHandler,
   RegisterCommandHandler,
   LoginCommandHandler,
+  CreateOAuthClientHandler,
   JwtStrategy,
   AuthService
 ]
@@ -43,7 +48,7 @@ const providers: Provider[] = [
       inject: [ConfigService]
     })
   ],
-  controllers: [OAuthController, AuthController],
+  controllers: [OAuthController, AuthController, OAuthClientController],
   providers
 })
 export class OAuthModule {}

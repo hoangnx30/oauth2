@@ -2,6 +2,7 @@ import {
   AuthorizationRequestDto,
   AuthorizationResDto,
   LoginDtoReqBody,
+  LoginResDto,
   RegisterDtoReqBody,
   RegisterResDto
 } from '../dtos'
@@ -12,5 +13,5 @@ export interface IOAuthController {
 
 export interface IAuthController {
   register: (body: RegisterDtoReqBody) => Promise<RegisterResDto>
-  login: (body: LoginDtoReqBody) => any
+  login: (body: LoginDtoReqBody, ipAddress: string, userAgent: string) => Promise<LoginResDto>
 }

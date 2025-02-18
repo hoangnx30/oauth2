@@ -27,7 +27,8 @@ export class JwtAuthGuard implements CanActivate {
   }
 
   private extractJwt(request: Request): string | null {
-    const authHeader = request.headers['Authorization']
+    const authHeader = request.headers['authorization']
+
     if (!authHeader) return null
 
     const [type, token] = authHeader.split(' ')

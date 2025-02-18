@@ -35,11 +35,9 @@ export class HttpException extends Error {
   }
 
   private getDefaultErrorConfiuration() {
-    const name = ErrorCode[this.errorCode]
     return {
-      name,
       responseCode: 1,
-      ...ERROR_MAP[name as keyof typeof ERROR_MAP]
+      ...ERROR_MAP[this.errorCode]
     }
   }
 

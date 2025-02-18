@@ -21,7 +21,7 @@ export class OAuthClientDomain {
   clientUri: string | null
   redirectUri: string
   scope: string | null
-  isConfidential: boolean | null
+  isConfidential: boolean
   isActive: boolean | null
   updateAt: Date | null
   createdAt: Date

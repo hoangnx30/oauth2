@@ -1,6 +1,13 @@
-import {ApiProperty} from '@nestjs/swagger'
+import {HttpStatus} from '@nestjs/common'
+import {ApiHeader, ApiProperty} from '@nestjs/swagger'
 import {Exclude, Expose} from 'class-transformer'
 import {IsEmail, IsString} from 'class-validator'
+
+import {ErrorMessage} from '@/common/constants/message.constants'
+import {ErrorCode} from '@/common/errors'
+import {APIDocsBuilder, ErrorOptions} from '@/common/utils/swagger'
+
+import {RegisterResDto} from './register.dto'
 
 export class LoginDtoReqBody {
   @ApiProperty()
@@ -69,4 +76,24 @@ export class LoginResDto {
   constructor(properties: any) {
     Object.assign(this, properties)
   }
+}
+
+export const LoginDocs = () => {
+  const path = '/auth/login'
+
+  const errors: ErrorOptions[] = [
+    {
+      status: HttpStatus.UNAUTHORIZED,
+      key: ErrorMessage.InvalidCredentials,
+      value: APIDocsBuilder.createErrorResponse(ErrorCode.InvalidCredentials, path, ErrorMessage.InvalidCredentials)
+    }
+  ]
+  const apiDocsBuilder = new APIDocsBuilder(path)
+
+  return apiDocsBuilder
+    .buildApiError(errors)
+    .buildApiOperation({summary: 'Login user'})
+    .addDecorators(ApiHeader({name: 'user-agent', required: true, description: 'User Agent'}))
+    .buildApiOkResponse({model: LoginResDto, statusCode: HttpStatus.CREATED})
+    .apply()
 }

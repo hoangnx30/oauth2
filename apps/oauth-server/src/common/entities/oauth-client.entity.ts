@@ -10,7 +10,7 @@ export const oauthClientTable = oauthSchema.table('oauth_clients', {
   clientUri: varchar('client_uri'),
   redirectUri: varchar('redirect_uri').notNull(),
   scope: varchar(),
-  isConfidential: boolean('is_confidential').default(false),
+  isConfidential: boolean('is_confidential').notNull().default(false),
   isActive: boolean('is_active').default(true),
   createdBy: uuid('create_by').notNull(),
   ...timestampColumns

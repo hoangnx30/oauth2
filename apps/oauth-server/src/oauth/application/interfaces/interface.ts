@@ -1,3 +1,4 @@
+import {JwtTokenDomain} from '@/oauth/domain/jwt-token'
 import {OAuthClientDomain} from '@/oauth/domain/oauth-client'
 import {UserDomain} from '@/oauth/domain/user'
 
@@ -9,6 +10,7 @@ export interface ICreateOAuthClient {
   redirectUri: string
   scope?: string
   createdBy: string
+  isConfidential: boolean
 }
 
 export interface IOAuthClientRepository {
@@ -26,6 +28,18 @@ export interface IUserRepository {
   findActiveUserByUsernameAndEmail(username: string, email: string): Promise<UserDomain | null>
   save(data: ICreateUser): Promise<UserDomain>
   findActiveUserByEmail(email: string): Promise<UserDomain | null>
+}
+
+export interface ICreateJwtToken {
+  refreshToken: string | null
+  userId: string
+  ipAddress: string | null
+  userAgent: string | null
+  expiresAt: Date | null
+}
+
+export interface IJwtTokenRepository {
+  save(data: ICreateJwtToken): Promise<JwtTokenDomain>
 }
 
 export interface IOAuthAuthorizationRequestRepository {}

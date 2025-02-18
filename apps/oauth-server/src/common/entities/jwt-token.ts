@@ -1,10 +1,10 @@
-import {integer, timestamp, uuid, varchar} from 'drizzle-orm/pg-core'
+import {serial, timestamp, uuid, varchar} from 'drizzle-orm/pg-core'
 
 import {oauthSchema, timestampColumns} from './base.entity'
 import {userTable} from './user.entity'
 
 export const jwtTokenTable = oauthSchema.table('jwt_tokens', {
-  id: integer().primaryKey(),
+  id: serial().primaryKey(),
   refreshToken: varchar('refresh_token'),
   userId: uuid('user_id')
     .notNull()
@@ -16,5 +16,5 @@ export const jwtTokenTable = oauthSchema.table('jwt_tokens', {
   ...timestampColumns
 })
 
-export type SelectOAuthState = typeof jwtTokenTable.$inferSelect
-export type InsertOAuthState = typeof jwtTokenTable.$inferInsert
+export type SelectJwtToken = typeof jwtTokenTable.$inferSelect
+export type InsertJwtToken = typeof jwtTokenTable.$inferInsert

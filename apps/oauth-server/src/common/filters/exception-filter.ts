@@ -46,7 +46,6 @@ export class AllExceptionFilter implements ExceptionFilter {
     const response: Response = host.switchToHttp().getResponse()
     const timestamp = new Date().toISOString()
     const path = this.httpAdapterHost.httpAdapter.getRequestUrl(request) as string
-    console.log(exception)
     this.logger.error({
       traceId: this.getTraceId(),
       error: {
@@ -135,7 +134,7 @@ export class AllExceptionFilter implements ExceptionFilter {
           statusCode: resolvedException.statusCode,
           responseCode: exception.responseCode as number,
           error: {
-            code: resolvedException.name,
+            code: resolvedException.errorCode,
             message: resolvedException.message,
             data: resolvedException.meta?.data ? resolvedException.meta.data : undefined
           },

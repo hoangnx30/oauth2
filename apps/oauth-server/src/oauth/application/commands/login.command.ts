@@ -13,7 +13,9 @@ export type LoginCommandResult = {
 export class LoginCommand extends Command<LoginCommandResult> {
   constructor(
     public readonly email: string,
-    public readonly password: string
+    public readonly password: string,
+    public readonly ipAddress: string,
+    public readonly userAgent: string
   ) {
     super()
   }

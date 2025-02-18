@@ -1,4 +1,4 @@
-import {Body, ClassSerializerInterceptor, Controller, Post, UseInterceptors} from '@nestjs/common'
+import {Body, ClassSerializerInterceptor, Controller, Headers, Ip, Post, UseInterceptors} from '@nestjs/common'
 import {CommandBus} from '@nestjs/cqrs'
 import {ApiTags} from '@nestjs/swagger'
 import {Throttle} from '@nestjs/throttler'
@@ -6,7 +6,7 @@ import {Throttle} from '@nestjs/throttler'
 import {LoginCommand} from '@/oauth/application/commands/login.command'
 import {RegisterCommand} from '@/oauth/application/commands/register.command'
 
-import {LoginDtoReqBody, LoginResDto, RegisterDocs, RegisterDtoReqBody, RegisterResDto} from '../dtos'
+import {LoginDocs, LoginDtoReqBody, LoginResDto, RegisterDocs, RegisterDtoReqBody, RegisterResDto} from '../dtos'
 import {IAuthController} from './interface'
 
 @ApiTags('Authentication')
@@ -21,17 +21,23 @@ export class AuthController implements IAuthController {
     const {email, username, password} = body
     const command = new RegisterCommand(email, username, password)
 
-    return this.commandBus.execute(command)
+    const commandResult = await this.commandBus.execute(command)
+
+    return new RegisterResDto(commandResult)
   }
 
   @Post('login')
   @UseInterceptors(ClassSerializerInterceptor)
   @Throttle({default: {limit: 10, ttl: 60000}}) // 10 requests per minute
-  async login(@Body() body: LoginDtoReqBody): Promise<LoginResDto> {
+  @LoginDocs()
+  async login(
+    @Body() body: LoginDtoReqBody,
+    @Ip() ipAddress: string,
+    @Headers('user-agent') userAgent: string
+  ): Promise<LoginResDto> {
     const {email, password} = body
 
-    const command = new LoginCommand(email, password)
-
+    const command = new LoginCommand(email, password, ipAddress, userAgent)
     const res = await this.commandBus.execute(command)
 
     return new LoginResDto(res)
