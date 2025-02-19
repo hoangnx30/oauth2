@@ -7,6 +7,8 @@ import {ErrorMessage} from '@/common/constants/message.constants'
 import {ErrorCode} from '@/common/errors'
 import {APIDocsBuilder, ErrorOptions} from '@/common/utils/swagger'
 
+import {LoginCommandResult} from '@/oauth/application/commands'
+
 import {RegisterResDto} from './register.dto'
 
 export class LoginDtoReqBody {
@@ -73,7 +75,7 @@ export class LoginResDto {
   @Expose()
   expiresIn: number
 
-  constructor(properties: any) {
+  constructor(properties: LoginCommandResult) {
     Object.assign(this, properties)
   }
 }

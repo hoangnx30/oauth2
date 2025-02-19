@@ -1,4 +1,5 @@
 import {JwtTokenDomain} from '@/oauth/domain/jwt-token'
+import {OAuthAuthorizationRequestDomain} from '@/oauth/domain/oauth-authorization-request'
 import {OAuthClientDomain} from '@/oauth/domain/oauth-client'
 import {UserDomain} from '@/oauth/domain/user'
 
@@ -42,6 +43,20 @@ export interface IJwtTokenRepository {
   save(data: ICreateJwtToken): Promise<JwtTokenDomain>
 }
 
-export interface IOAuthAuthorizationRequestRepository {}
+export interface ICreateOAuthAuthorizationRequest {
+  clientId: string
+  userId: string
+  code
+  codeChallenge: string
+  codeChallengeMethod: string
+  redirectUri: string
+  scope?: string
+  state: string
+  expiresAt: Date
+}
+
+export interface IOAuthAuthorizationRequestRepository {
+  save(data: ICreateOAuthAuthorizationRequest): Promise<OAuthAuthorizationRequestDomain>
+}
 
 export interface IOAuthStateRepository {}

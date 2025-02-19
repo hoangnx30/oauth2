@@ -7,6 +7,8 @@ import {ErrorMessage} from '@/common/constants/message.constants'
 import {ErrorCode} from '@/common/errors/error-code'
 import {APIDocsBuilder, ErrorOptions} from '@/common/utils/swagger'
 
+import {RegisterCommandResult} from '@/oauth/application/commands'
+
 export class RegisterDtoReqBody {
   @ApiProperty()
   @IsString()
@@ -67,7 +69,7 @@ export class RegisterResDto {
   @Expose()
   accessToken: string
 
-  constructor(properties: any) {
+  constructor(properties: RegisterCommandResult) {
     Object.assign(this, properties)
   }
 }

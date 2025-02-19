@@ -1,3 +1,5 @@
+import {Request} from 'express'
+
 import {
   AuthorizationRequestDto,
   AuthorizationResDto,
@@ -8,7 +10,7 @@ import {
 } from '../dtos'
 
 export interface IOAuthController {
-  authorize: (query: AuthorizationRequestDto) => Promise<AuthorizationResDto>
+  authorize: (query: AuthorizationRequestDto, request: Request) => Promise<AuthorizationResDto>
 }
 
 export interface IAuthController {

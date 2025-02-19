@@ -1,6 +1,15 @@
+import {HttpStatus} from '@nestjs/common'
 import {ApiProperty} from '@nestjs/swagger'
 import {Exclude, Expose} from 'class-transformer'
 import {ArrayMinSize, IsArray, IsBoolean, IsOptional, IsString, IsUrl, Matches} from 'class-validator'
+
+import {ErrorMessage} from '@/common/constants/message.constants'
+import {ErrorCode} from '@/common/errors'
+import {APIDocsBuilder, ErrorOptions} from '@/common/utils/swagger'
+
+import {CreateOAuthClientCommandResult} from '@/oauth/application/commands'
+
+import {AuthorizationResDto} from './authorization-request.dto'
 
 export class CreateOAuthClientDto {
   @ApiProperty({description: 'Name of the OAuth client'})
@@ -71,7 +80,19 @@ export class CreateOAuthClientResDto {
   @Expose()
   client: Client
 
-  constructor(properties: any) {
+  constructor(properties: CreateOAuthClientCommandResult) {
     Object.assign(this, properties)
   }
+}
+
+export const CreateOAuthClientDocs = () => {
+  const path = '/oauth/clients'
+
+  const apiDocsBuilder = new APIDocsBuilder(path)
+
+  return apiDocsBuilder
+    .buildApiOperation({summary: 'Create OAuth Client'})
+    .buildApiError()
+    .buildApiOkResponse({model: CreateOAuthClientResDto, statusCode: HttpStatus.CREATED})
+    .apply()
 }

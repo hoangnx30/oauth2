@@ -10,8 +10,18 @@ import {RegisterCommandHandler} from './application/handler/register.handler'
 import {JwtStrategy} from './application/jwt.strategy'
 import {AuthService} from './application/services'
 import {AuthController, OAuthClientController, OAuthController} from './infrastructure/controllers'
-import {JwtTokenRepository, OAuthClientRepository, UserRepository} from './infrastructure/repositories'
-import {JWT_TOKEN_REPOSITORY_TOKEN, OAUTH_CLIENT_REPOSITORY_TOKEN, USER_REPOSITORY_TOKEN} from './inject-token'
+import {
+  JwtTokenRepository,
+  OAuthAuthorizationRequestRepository,
+  OAuthClientRepository,
+  UserRepository
+} from './infrastructure/repositories'
+import {
+  JWT_TOKEN_REPOSITORY_TOKEN,
+  OAUTH_AUTHORIZATION_REQUEST_REPOSITORY_TOKEN,
+  OAUTH_CLIENT_REPOSITORY_TOKEN,
+  USER_REPOSITORY_TOKEN
+} from './inject-token'
 
 const providers: Provider[] = [
   {
@@ -21,6 +31,10 @@ const providers: Provider[] = [
   {
     provide: USER_REPOSITORY_TOKEN,
     useClass: UserRepository
+  },
+  {
+    provide: OAUTH_AUTHORIZATION_REQUEST_REPOSITORY_TOKEN,
+    useClass: OAuthAuthorizationRequestRepository
   },
   {
     provide: JWT_TOKEN_REPOSITORY_TOKEN,

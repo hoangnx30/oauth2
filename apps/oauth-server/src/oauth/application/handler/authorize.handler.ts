@@ -7,26 +7,42 @@ import {HttpException} from '@/common/errors/http-exception'
 import DateTimeUtils from '@/common/utils/datetime'
 
 import {OAuthAuthorizationRequestDomain} from '@/oauth/domain/oauth-authorization-request'
-import {OAUTH_CLIENT_REPOSITORY_TOKEN} from '@/oauth/inject-token'
+import {OAUTH_AUTHORIZATION_REQUEST_REPOSITORY_TOKEN, OAUTH_CLIENT_REPOSITORY_TOKEN} from '@/oauth/inject-token'
 
 import {AuthorizeCommand, AuthorizeCommandResult} from '../commands'
-import {IOAuthClientRepository} from '../interfaces'
+import {IOAuthAuthorizationRequestRepository, IOAuthClientRepository} from '../interfaces'
 
 @CommandHandler(AuthorizeCommand)
 export class AuthorizeCommandHandler implements ICommandHandler<AuthorizeCommand> {
-  constructor(@Inject(OAUTH_CLIENT_REPOSITORY_TOKEN) private readonly oauthClientRepo: IOAuthClientRepository) {}
+  constructor(
+    @Inject(OAUTH_CLIENT_REPOSITORY_TOKEN) private readonly oauthClientRepo: IOAuthClientRepository,
+    @Inject(OAUTH_AUTHORIZATION_REQUEST_REPOSITORY_TOKEN)
+    private readonly oauthAuthorizationRequestRepository: IOAuthAuthorizationRequestRepository
+  ) {}
 
   async execute(command: AuthorizeCommand): Promise<AuthorizeCommandResult> {
-    const {clientId} = command
+    const {clientId, codeChallenge, codeChallengeMethod, scope, state, redirectUri, userId} = command
     const client = await this.oauthClientRepo.findActiveOAuthClientByClientId(clientId)
     if (!client) {
       throw new HttpException(ErrorCode.InvalidOAuthClient)
     }
 
     const code = this.generateCode()
-    const expireAt = DateTimeUtils.utc().add(30, 'minute')
+    const expiresAt = DateTimeUtils.utc().add(30, 'minute').toDate()
 
-    return {code: ''}
+    await this.oauthAuthorizationRequestRepository.save({
+      clientId,
+      userId,
+      code,
+      codeChallenge,
+      codeChallengeMethod,
+      redirectUri,
+      scope,
+      state,
+      expiresAt
+    })
+
+    return {code, state}
   }
 
   private generateCode(): string {
