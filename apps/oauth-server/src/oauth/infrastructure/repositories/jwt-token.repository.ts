@@ -2,23 +2,25 @@ import {Inject} from '@nestjs/common'
 import {NodePgDatabase} from 'drizzle-orm/node-postgres'
 
 import {DATABASE_TOKEN} from '@/common/constants/app.constants'
+import {UnitOfWorkService} from '@/common/drizzle'
 import * as schema from '@/common/entities'
-import {SelectJwtToken} from '@/common/entities'
+import {InsertJwtToken, SelectJwtToken} from '@/common/entities'
 
-import {ICreateJwtToken, IJwtTokenRepository} from '@/oauth/application/interfaces'
+import {IJwtTokenRepository} from '@/oauth/application/interfaces'
 import {JwtTokenDomain} from '@/oauth/domain/jwt-token'
 
-const {jwtTokenTable} = schema
+import {JwtTokenMapper} from '../mappers/jwt-token.mapper'
+import {BaseRepository} from './base.repository'
 
-export class JwtTokenRepository implements IJwtTokenRepository {
-  constructor(@Inject(DATABASE_TOKEN) private readonly drizzle: NodePgDatabase<typeof schema>) {}
+const {jwtToken} = schema
 
-  async save(data: ICreateJwtToken): Promise<JwtTokenDomain> {
-    const res = await this.drizzle.insert(jwtTokenTable).values(data).returning()
-    return this.toDomain(res[0])
+export class JwtTokenRepository extends BaseRepository implements IJwtTokenRepository {
+  constructor(@Inject(DATABASE_TOKEN) drizzle: NodePgDatabase<typeof schema>, unitOfWorkService: UnitOfWorkService) {
+    super(drizzle, unitOfWorkService)
   }
 
-  toDomain(data: SelectJwtToken) {
-    return new JwtTokenDomain(data)
+  async save(data: JwtTokenDomain): Promise<JwtTokenDomain> {
+    const res = await this.getDatabase().insert(jwtToken).values(JwtTokenMapper.toEntity(data)).returning()
+    return JwtTokenMapper.toDomain(res[0])
   }
 }

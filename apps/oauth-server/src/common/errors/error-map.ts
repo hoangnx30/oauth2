@@ -37,5 +37,29 @@ export const ERROR_MAP: ErrorMap = {
   [ErrorCode.InvalidCredentials]: {
     statusCode: HttpStatus.UNAUTHORIZED,
     message: ErrorMessage.InvalidCredentials
+  },
+  [ErrorCode.InvalidOrExpiredCode]: {
+    statusCode: HttpStatus.UNAUTHORIZED,
+    message: ErrorMessage.InvalidOrExpiredCode
+  },
+  [ErrorCode.InvalidRedirectURI]: {
+    statusCode: HttpStatus.UNAUTHORIZED,
+    message: ErrorMessage.InvalidOrExpiredCode
+  },
+  [ErrorCode.NotSupportedCodeChallengeMethod]: {
+    statusCode: HttpStatus.BAD_REQUEST,
+    message: ErrorMessage.NotSupportedCodeChallengeMethod
+  },
+  [ErrorCode.InvalidCodeVerifier]: {
+    statusCode: HttpStatus.BAD_REQUEST,
+    message: ErrorMessage.InvalidCodeVerifier
+  },
+  [ErrorCode.InvalidOAuthRequest]: {
+    statusCode: HttpStatus.BAD_REQUEST,
+    message: ErrorMessage.InvalidOAuthRequest
+  },
+  [ErrorCode.OAuthRequestExpired]: {
+    statusCode: HttpStatus.BAD_REQUEST,
+    message: ErrorMessage.OAuthRequestExpired
   }
 }

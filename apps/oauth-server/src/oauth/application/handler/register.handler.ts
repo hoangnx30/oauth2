@@ -5,6 +5,7 @@ import * as bcrypt from 'bcrypt'
 import {ErrorCode} from '@/common/errors/error-code'
 import {HttpException} from '@/common/errors/http-exception'
 
+import {UserDomain} from '@/oauth/domain/user'
 import {USER_REPOSITORY_TOKEN} from '@/oauth/inject-token'
 
 import {RegisterCommand, RegisterCommandResult} from '../commands/register.command'
@@ -29,9 +30,11 @@ export class RegisterCommandHandler implements ICommandHandler<RegisterCommand> 
 
     const hashedPassword = await this.hashPassword(password)
 
-    const {passwordHash, ...result} = await this.userRepo.save({username, email, passwordHash: hashedPassword})
+    const userDomain = new UserDomain({username, email, passwordHash: hashedPassword})
 
-    const accessToken = this.authService.createAccessToken(result.id, result.username)
+    const {passwordHash, ...result} = await this.userRepo.save(userDomain)
+
+    const accessToken = this.authService.createAccessToken(result.id, result.username, result.email)
 
     return {user: result, accessToken}
   }

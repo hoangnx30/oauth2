@@ -40,7 +40,7 @@ class User {
 
   @ApiProperty({type: String, example: new Date().toISOString()})
   @Expose()
-  updateAt: Date | null
+  updatedAt: Date | null
 
   @ApiProperty({type: String, example: new Date().toISOString()})
   @Expose()

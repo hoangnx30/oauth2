@@ -1,7 +1,7 @@
 type User = {
-  id: string
+  id: number
   isActive: boolean | null
-  updateAt: Date | null
+  updatedAt: Date | null
   createdAt: Date
   deletedAt: Date | null
   username: string
@@ -10,16 +10,16 @@ type User = {
 }
 
 export class UserDomain {
-  id: string
+  id: number
   isActive: boolean
-  updateAt: Date | null
+  updatedAt: Date | null
   createdAt: Date
   deletedAt: Date | null
   username: string
   passwordHash: string
   email: string
 
-  constructor(properties: User) {
+  constructor(properties: Partial<User>) {
     Object.assign(this, properties)
   }
 }

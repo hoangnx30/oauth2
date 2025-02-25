@@ -1,8 +1,7 @@
 import {Command} from '@nestjs/cqrs'
 
 export type AuthorizeCommandResult = {
-  code: string
-  state: string
+  oauthRequestId: number
 }
 
 export class AuthorizeCommand extends Command<AuthorizeCommandResult> {
@@ -11,7 +10,6 @@ export class AuthorizeCommand extends Command<AuthorizeCommandResult> {
     public readonly redirectUri: string,
     public readonly codeChallenge: string,
     public readonly codeChallengeMethod: string,
-    public readonly userId: string,
     public readonly state: string,
     public readonly scope?: string
   ) {

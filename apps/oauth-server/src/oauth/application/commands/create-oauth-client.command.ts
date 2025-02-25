@@ -1,7 +1,7 @@
 import {Command} from '@nestjs/cqrs'
 
 export type CreateOAuthClientCommandResult = {
-  id: string
+  id: number
   clientId: string
   clientName: string
   clientUri: string | null
@@ -16,7 +16,7 @@ export class CreateOAuthClientCommand extends Command<CreateOAuthClientCommandRe
     public readonly clientName: string,
     public readonly clientUri: string,
     public readonly redirectUris: string[],
-    public readonly userId: string,
+    public readonly userId: number,
     public readonly scope?: string,
     public readonly isConfidential?: boolean
   ) {

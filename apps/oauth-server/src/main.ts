@@ -1,4 +1,4 @@
-import {ValidationPipe} from '@nestjs/common'
+import {ConsoleLogger, ValidationPipe} from '@nestjs/common'
 import {HttpAdapterHost, NestFactory} from '@nestjs/core'
 import {NestExpressApplication} from '@nestjs/platform-express'
 import {Logger} from 'nestjs-pino'
@@ -10,7 +10,9 @@ import {ASYNC_LOCAL_STORAGE} from './common/middlewares'
 import {setupSwagger} from './swagger'
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule)
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    logger: new ConsoleLogger({json: true, colors: true})
+  })
 
   const logger = app.get(Logger)
 

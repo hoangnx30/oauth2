@@ -1,5 +1,7 @@
+import * as crypto from 'crypto'
+
 type OAuthClient = {
-  id: string
+  id: number
   clientId: string
   clientSecret: string | null
   clientName: string
@@ -8,13 +10,14 @@ type OAuthClient = {
   scope: string | null
   isConfidential: boolean | null
   isActive: boolean | null
-  updateAt: Date | null
+  updatedAt: Date | null
   createdAt: Date
   deletedAt: Date | null
+  createdBy: number
 }
 
 export class OAuthClientDomain {
-  id: string
+  id: number
   clientId: string
   clientSecret: string | null
   clientName: string
@@ -23,12 +26,23 @@ export class OAuthClientDomain {
   scope: string | null
   isConfidential: boolean
   isActive: boolean | null
-  updateAt: Date | null
+  updatedAt: Date | null
   createdAt: Date
   deletedAt: Date | null
-  createdBy: string
+  createdBy: number
 
-  constructor(properties: OAuthClient) {
+  constructor(properties: Partial<OAuthClient>) {
     Object.assign(this, properties)
+  }
+
+  generateClientId() {
+    this.clientId = crypto.randomBytes(32).toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '')
+  }
+
+  generateClientSecret() {
+    console.log(this.isConfidential)
+    this.clientSecret = this.isConfidential
+      ? crypto.randomBytes(48).toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '')
+      : null
   }
 }

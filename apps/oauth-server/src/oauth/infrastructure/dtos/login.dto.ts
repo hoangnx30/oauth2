@@ -1,7 +1,7 @@
 import {HttpStatus} from '@nestjs/common'
 import {ApiHeader, ApiProperty} from '@nestjs/swagger'
 import {Exclude, Expose} from 'class-transformer'
-import {IsEmail, IsString} from 'class-validator'
+import {IsEmail, IsNumber, IsOptional, IsString} from 'class-validator'
 
 import {ErrorMessage} from '@/common/constants/message.constants'
 import {ErrorCode} from '@/common/errors'
@@ -9,10 +9,8 @@ import {APIDocsBuilder, ErrorOptions} from '@/common/utils/swagger'
 
 import {LoginCommandResult} from '@/oauth/application/commands'
 
-import {RegisterResDto} from './register.dto'
-
 export class LoginDtoReqBody {
-  @ApiProperty()
+  @ApiProperty({required: false})
   @IsString()
   @IsEmail()
   email: string
@@ -20,6 +18,11 @@ export class LoginDtoReqBody {
   @ApiProperty()
   @IsString()
   password: string
+
+  @ApiProperty()
+  @IsOptional()
+  @IsNumber()
+  oauthRequestId: number
 }
 
 @Exclude()
@@ -34,7 +37,7 @@ class User {
 
   @ApiProperty()
   @Expose()
-  updateAt: Date | null
+  updatedAt: Date | null
 
   @ApiProperty()
   @Expose()
@@ -55,25 +58,29 @@ class User {
 
 @Exclude()
 export class LoginResDto {
-  @ApiProperty()
+  @ApiProperty({required: false})
   @Expose()
   accessToken: string
 
-  @ApiProperty({type: User})
+  @ApiProperty({type: User, required: false})
   @Expose()
   user: User
 
-  @ApiProperty()
+  @ApiProperty({required: false})
   @Expose()
   refreshToken: string
 
-  @ApiProperty()
+  @ApiProperty({required: false})
   @Expose()
   tokenType: string
 
-  @ApiProperty()
+  @ApiProperty({required: false})
   @Expose()
   expiresIn: number
+
+  @ApiProperty({required: false})
+  @Expose()
+  oauthRequestId: number
 
   constructor(properties: LoginCommandResult) {
     Object.assign(this, properties)

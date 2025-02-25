@@ -3,33 +3,38 @@ import {and, eq} from 'drizzle-orm'
 import {NodePgDatabase} from 'drizzle-orm/node-postgres'
 
 import {DATABASE_TOKEN} from '@/common/constants/app.constants'
+import {UnitOfWorkService} from '@/common/drizzle'
 import * as schema from '@/common/entities'
 import {SelectOAuthClient} from '@/common/entities'
 
-import {ICreateOAuthClient, IOAuthClientRepository} from '@/oauth/application/interfaces'
+import {IOAuthClientRepository} from '@/oauth/application/interfaces'
 import {OAuthClientDomain} from '@/oauth/domain/oauth-client'
 
-const {oauthClientTable} = schema
+import {OAuthClientMapper} from '../mappers/oauth-client.mapper'
+import {BaseRepository} from './base.repository'
+
+const {oauthClient} = schema
 
 @Injectable()
-export class OAuthClientRepository implements IOAuthClientRepository {
-  constructor(@Inject(DATABASE_TOKEN) private readonly drizzle: NodePgDatabase<typeof schema>) {}
+export class OAuthClientRepository extends BaseRepository implements IOAuthClientRepository {
+  constructor(@Inject(DATABASE_TOKEN) drizzle: NodePgDatabase<typeof schema>, unitOfWorkService: UnitOfWorkService) {
+    super(drizzle, unitOfWorkService)
+  }
 
-  async findActiveOAuthClientByClientId(clientId: string): Promise<OAuthClientDomain[]> {
-    const data: SelectOAuthClient[] = await this.drizzle
+  async findActiveOAuthClientByClientId(clientId: string): Promise<OAuthClientDomain> {
+    const data: SelectOAuthClient[] = await this.getDatabase()
       .select()
-      .from(oauthClientTable)
-      .where(and(eq(oauthClientTable.clientId, clientId), eq(oauthClientTable.isActive, true)))
+      .from(oauthClient)
+      .where(and(eq(oauthClient.clientId, clientId), eq(oauthClient.isActive, true)))
 
-    return data.map((d) => this.toDomain(d))
+    return OAuthClientMapper.toDomain(data[0])
   }
 
-  async save(data: ICreateOAuthClient): Promise<SelectOAuthClient> {
-    const res: SelectOAuthClient[] = await this.drizzle.insert(oauthClientTable).values(data).returning()
-    return this.toDomain(res[0])
-  }
-
-  toDomain(data: SelectOAuthClient): OAuthClientDomain {
-    return new OAuthClientDomain(data)
+  async save(data: OAuthClientDomain): Promise<OAuthClientDomain> {
+    const res: SelectOAuthClient[] = await this.getDatabase()
+      .insert(oauthClient)
+      .values(OAuthClientMapper.toEntity(data))
+      .returning()
+    return OAuthClientMapper.toDomain(res[0])
   }
 }

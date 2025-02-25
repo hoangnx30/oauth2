@@ -24,14 +24,14 @@ export class OAuthClientController {
       body.clientName,
       body.clientUri,
       body.redirectUris,
-      req!.user!.id,
+      req.user!.id,
       body.scope,
       body.isConfidential
     )
     const client = await this.commandBus.execute(command)
 
     // Log the creation for audit purposes
-    console.log(`OAuth client created by ${req!.user!.id} at ${new Date('2025-02-17 10:46:18').toISOString()}`)
+    console.log(`OAuth client created by ${req.user!.id} at ${new Date('2025-02-17 10:46:18').toISOString()}`)
 
     return new CreateOAuthClientResDto(client)
   }

@@ -1,16 +1,9 @@
-import {Request} from 'express'
+import {Request, Response} from 'express'
 
-import {
-  AuthorizationRequestDto,
-  AuthorizationResDto,
-  LoginDtoReqBody,
-  LoginResDto,
-  RegisterDtoReqBody,
-  RegisterResDto
-} from '../dtos'
+import {AuthorizationRequestDto, LoginDtoReqBody, LoginResDto, RegisterDtoReqBody, RegisterResDto} from '../dtos'
 
 export interface IOAuthController {
-  authorize: (query: AuthorizationRequestDto, request: Request) => Promise<AuthorizationResDto>
+  authorize: (query: AuthorizationRequestDto, response: Response) => Promise<void>
 }
 
 export interface IAuthController {

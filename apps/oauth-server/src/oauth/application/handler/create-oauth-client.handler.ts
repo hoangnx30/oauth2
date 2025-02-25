@@ -2,6 +2,7 @@ import {Inject} from '@nestjs/common'
 import {CommandHandler, ICommandHandler} from '@nestjs/cqrs'
 import * as crypto from 'crypto'
 
+import {OAuthClientDomain} from '@/oauth/domain/oauth-client'
 import {OAUTH_CLIENT_REPOSITORY_TOKEN} from '@/oauth/inject-token'
 
 import {CreateOAuthClientCommand, CreateOAuthClientCommandResult} from '../commands'
@@ -13,18 +14,20 @@ export class CreateOAuthClientHandler implements ICommandHandler<CreateOAuthClie
 
   async execute(command: CreateOAuthClientCommand): Promise<CreateOAuthClientCommandResult> {
     const {clientName, clientUri, isConfidential, scope, redirectUris, userId} = command
-    const clientId = this.generateClientId()
-    const clientSecret = isConfidential ? this.generateClientSecret() : null
-    const oauthClient = await this.oauthClientRepo.save({
+
+    const oauthClientDomain = new OAuthClientDomain({
       clientName,
-      clientSecret,
       clientUri,
       redirectUri: redirectUris.join(','),
-      scope,
+      scope: scope ?? null,
       isConfidential: isConfidential ?? false,
-      clientId,
       createdBy: userId
     })
+
+    oauthClientDomain.generateClientId()
+    oauthClientDomain.generateClientSecret()
+
+    const oauthClient = await this.oauthClientRepo.save(oauthClientDomain)
 
     return oauthClient
   }

@@ -46,18 +46,9 @@ export class AuthorizationRequestDto {
 
   @ApiProperty({required: false})
   @Expose()
-  @IsOptional()
+  @IsNotEmpty()
   @IsString()
   scope?: string
-}
-
-export class AuthorizationResDto {
-  @ApiProperty()
-  redirectUrl: string
-
-  constructor(redirectUrl: string) {
-    this.redirectUrl = redirectUrl
-  }
 }
 
 export const AuthorizeDocs = () => {
@@ -75,6 +66,6 @@ export const AuthorizeDocs = () => {
   return apiDocsBuilder
     .buildApiError(errors)
     .buildApiOperation({summary: 'Authorize user'})
-    .buildApiOkResponse({model: AuthorizationResDto, statusCode: HttpStatus.OK})
+    .buildApiOkResponse({statusCode: HttpStatus.MOVED_PERMANENTLY})
     .apply()
 }

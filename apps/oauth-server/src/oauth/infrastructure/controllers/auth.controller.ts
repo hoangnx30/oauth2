@@ -35,9 +35,9 @@ export class AuthController implements IAuthController {
     @Ip() ipAddress: string,
     @Headers('user-agent') userAgent: string
   ): Promise<LoginResDto> {
-    const {email, password} = body
+    const {email, password, oauthRequestId} = body
 
-    const command = new LoginCommand(email, password, ipAddress, userAgent)
+    const command = new LoginCommand(email, password, oauthRequestId, ipAddress, userAgent)
     const res = await this.commandBus.execute(command)
 
     return new LoginResDto(res)

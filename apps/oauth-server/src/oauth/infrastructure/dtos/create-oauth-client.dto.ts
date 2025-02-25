@@ -3,13 +3,9 @@ import {ApiProperty} from '@nestjs/swagger'
 import {Exclude, Expose} from 'class-transformer'
 import {ArrayMinSize, IsArray, IsBoolean, IsOptional, IsString, IsUrl, Matches} from 'class-validator'
 
-import {ErrorMessage} from '@/common/constants/message.constants'
-import {ErrorCode} from '@/common/errors'
-import {APIDocsBuilder, ErrorOptions} from '@/common/utils/swagger'
+import {APIDocsBuilder} from '@/common/utils/swagger'
 
 import {CreateOAuthClientCommandResult} from '@/oauth/application/commands'
-
-import {AuthorizationResDto} from './authorization-request.dto'
 
 export class CreateOAuthClientDto {
   @ApiProperty({description: 'Name of the OAuth client'})

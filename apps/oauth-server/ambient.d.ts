@@ -5,7 +5,7 @@ import {User} from './common/models'
 declare module 'express' {
   export interface Request {
     user?: {
-      id: string
+      id: number
       username: string
     }
   }

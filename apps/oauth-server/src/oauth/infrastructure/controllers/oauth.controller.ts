@@ -1,12 +1,17 @@
-import {Controller, Get, Query, Request, UseGuards} from '@nestjs/common'
+import {Body, Controller, Get, Post, Query, Res} from '@nestjs/common'
 import {CommandBus} from '@nestjs/cqrs'
-import {Request as ExpressRequest} from 'express'
+import {Response} from 'express'
 
-import {JwtAuthGuard} from '@/common/guards/jwt.guard'
+import {AuthorizeCommand, ExchangeCodeForTokenCommand, UserConsentApprovalCommand} from '@/oauth/application/commands'
 
-import {AuthorizeCommand} from '@/oauth/application/commands'
-
-import {AuthorizationRequestDto, AuthorizationResDto, AuthorizeDocs} from '../dtos'
+import {
+  AuthorizationRequestDto,
+  AuthorizeDocs,
+  UserConsentApprovalDocs,
+  UserConsentApprovalReqBodyDto,
+  UserConsentApprovalResDto
+} from '../dtos'
+import {ExchangeTokenDocs, ExchangeTokenReqBodyDto, ExchangeTokenResDto} from '../dtos/exchange-token.dto'
 import {IOAuthController} from './interface'
 
 @Controller('oauth')
@@ -14,30 +19,39 @@ export class OAuthController implements IOAuthController {
   constructor(private readonly commandBus: CommandBus) {}
 
   @Get('authorize')
-  @UseGuards(JwtAuthGuard)
   @AuthorizeDocs()
-  async authorize(
-    @Query() query: AuthorizationRequestDto,
-    @Request() request: ExpressRequest
-  ): Promise<AuthorizationResDto> {
+  async authorize(@Query() query: AuthorizationRequestDto, @Res() response: Response): Promise<void> {
     const {clientId, codeChallenge, codeChallengeMethod, scope, state, redirectUri} = query
 
-    const command = new AuthorizeCommand(
-      clientId,
-      redirectUri,
-      codeChallenge,
-      codeChallengeMethod,
-      request!.user!.id,
-      state,
-      scope
-    )
+    const command = new AuthorizeCommand(clientId, redirectUri, codeChallenge, codeChallengeMethod, state, scope)
 
-    const {code} = await this.commandBus.execute(command)
+    try {
+      const {oauthRequestId} = await this.commandBus.execute(command)
+      console.log('oauthRequestId', oauthRequestId)
 
-    const redirectUrl = new URL(query.redirectUri)
-    redirectUrl.searchParams.set('code', code)
-    redirectUrl.searchParams.set('state', state)
+      response.redirect(`/login?oauth-request-id=${oauthRequestId}`)
+    } catch (error) {
+      console.log(error)
+      response.redirect(`${redirectUri}?error=server_error&state=${state}`)
+    }
+  }
 
-    return new AuthorizationResDto(redirectUrl.toString())
+  @Post('consent/approval')
+  @UserConsentApprovalDocs()
+  async token(@Body() body: UserConsentApprovalReqBodyDto): Promise<UserConsentApprovalResDto> {
+    const command = new UserConsentApprovalCommand(body.oauthRequestId)
+    const {redirectUrl} = await this.commandBus.execute(command)
+
+    return new UserConsentApprovalResDto(redirectUrl)
+  }
+
+  @Post('token')
+  @ExchangeTokenDocs()
+  async exchangeCodeForToken(@Body() body: ExchangeTokenReqBodyDto): Promise<ExchangeTokenResDto> {
+    const command = new ExchangeCodeForTokenCommand(body.code, body.codeVerifier)
+
+    const res = await this.commandBus.execute(command)
+
+    return new ExchangeTokenResDto(res)
   }
 }

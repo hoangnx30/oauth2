@@ -1,62 +1,46 @@
 import {JwtTokenDomain} from '@/oauth/domain/jwt-token'
-import {OAuthAuthorizationRequestDomain} from '@/oauth/domain/oauth-authorization-request'
+import {OAuthAccessTokenDomain} from '@/oauth/domain/oauth-access-token'
+import {OAuthAuthorizationApprovalDomain} from '@/oauth/domain/oauth-authorization-approval'
 import {OAuthClientDomain} from '@/oauth/domain/oauth-client'
+import {OAuthCodeDomain} from '@/oauth/domain/oauth-code'
+import {OAuthRefreshTokenDomain} from '@/oauth/domain/oauth-refresh-token'
+import {OAuthRequest, OAuthRequestDomain} from '@/oauth/domain/oauth-request'
 import {UserDomain} from '@/oauth/domain/user'
 
-export interface ICreateOAuthClient {
-  clientId: string
-  clientSecret: string | null
-  clientName: string
-  clientUri: string | null
-  redirectUri: string
-  scope?: string
-  createdBy: string
-  isConfidential: boolean
-}
-
 export interface IOAuthClientRepository {
-  findActiveOAuthClientByClientId(clientId: string): Promise<OAuthClientDomain[]>
-  save(data: ICreateOAuthClient): Promise<OAuthClientDomain>
-}
-
-export interface ICreateUser {
-  username: string
-  email: string
-  passwordHash: string
+  findActiveOAuthClientByClientId(clientId: string): Promise<OAuthClientDomain>
+  save(data: OAuthClientDomain): Promise<OAuthClientDomain>
 }
 
 export interface IUserRepository {
+  findActiveUserById(id: number): Promise<UserDomain | null>
   findActiveUserByUsernameAndEmail(username: string, email: string): Promise<UserDomain | null>
-  save(data: ICreateUser): Promise<UserDomain>
+  save(data: UserDomain): Promise<UserDomain>
   findActiveUserByEmail(email: string): Promise<UserDomain | null>
 }
 
-export interface ICreateJwtToken {
-  refreshToken: string | null
-  userId: string
-  ipAddress: string | null
-  userAgent: string | null
-  expiresAt: Date | null
-}
-
 export interface IJwtTokenRepository {
-  save(data: ICreateJwtToken): Promise<JwtTokenDomain>
-}
-
-export interface ICreateOAuthAuthorizationRequest {
-  clientId: string
-  userId: string
-  code
-  codeChallenge: string
-  codeChallengeMethod: string
-  redirectUri: string
-  scope?: string
-  state: string
-  expiresAt: Date
+  save(data: JwtTokenDomain): Promise<JwtTokenDomain>
 }
 
 export interface IOAuthAuthorizationRequestRepository {
-  save(data: ICreateOAuthAuthorizationRequest): Promise<OAuthAuthorizationRequestDomain>
+  save(data: OAuthRequestDomain): Promise<OAuthRequestDomain>
+  findById(id: number): Promise<OAuthRequestDomain | null>
 }
 
-export interface IOAuthStateRepository {}
+export interface IOAuthAccessTokenRepository {
+  save(data: OAuthAccessTokenDomain): Promise<OAuthAccessTokenDomain>
+}
+
+export interface IOAuthRefreshTokenRepository {
+  save(data: OAuthRefreshTokenDomain): Promise<OAuthRefreshTokenDomain>
+}
+
+export interface IOAuthCodeRepository {
+  save(data: OAuthCodeDomain): Promise<OAuthCodeDomain>
+  findUnUsedCodeByCode(code: string): Promise<OAuthCodeDomain | null>
+}
+
+export interface IOAuthAuthorizationApprovalRepository {
+  save(data: OAuthAuthorizationApprovalDomain): Promise<OAuthAuthorizationApprovalDomain>
+}

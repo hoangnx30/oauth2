@@ -1,10 +1,10 @@
 type JwtToken = {
   id: number
   refreshToken: string | null
-  updateAt: Date | null
+  updatedAt: Date | null
   createdAt: Date
   deletedAt: Date | null
-  userId: string
+  userId: number
   ipAddress: string | null
   userAgent: string | null
   expiresAt: Date | null
@@ -14,16 +14,16 @@ type JwtToken = {
 export class JwtTokenDomain {
   id: number
   refreshToken: string | null
-  updateAt: Date | null
+  updatedAt: Date | null
   createdAt: Date
   deletedAt: Date | null
-  userId: string
+  userId: number
   ipAddress: string | null
   userAgent: string | null
   expiresAt: Date | null
   revokedAt: Date | null
 
-  constructor(properties: JwtToken) {
+  constructor(properties: Partial<JwtToken>) {
     Object.assign(this, properties)
   }
 }
